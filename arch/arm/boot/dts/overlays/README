@@ -5193,6 +5193,12 @@ Params: 4lane                   Use 4 lanes (only applicable to Compute Modules
                                 Compute Module (CSI0, i2c_vc, and cam0_reg).
 
 
+Name:   tcan4550-can0
+Info:   Configures the TCAN4550 CAN controller on spi0.0
+Load:   dtoverlay=tcan4550-can0
+Params: <None>
+
+
 Name:   tinylcd35
 Info:   3.5" Color TFT Display by www.tinylcd.com
         Options: Touch, RTC, keypad
