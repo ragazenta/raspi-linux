@@ -4836,6 +4836,12 @@ Load:   dtoverlay=tc358743-audio,<param>=<val>
 Params: card-name               Override the default, "tc358743", card name.
 
 
+Name:   tcan4550-can0
+Info:   Configures the TCAN4550 CAN controller on spi0.0
+Load:   dtoverlay=tcan4550-can0
+Params: <None>
+
+
 Name:   tinylcd35
 Info:   3.5" Color TFT Display by www.tinylcd.com
         Options: Touch, RTC, keypad
