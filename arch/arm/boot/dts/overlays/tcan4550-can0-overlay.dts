@@ -1,0 +1,79 @@
+/*
+ * Device tree overlay for tcan4550 on spi0.0
+ */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+    /* disable spi-dev for spi0.0 */
+    fragment@0 {
+        target = <&spidev0>;
+        __overlay__ {
+            status = "disabled";
+        };
+    };
+
+    /* the interrupt pin of the can-controller */
+    fragment@1 {
+        target = <&gpio>;
+        __overlay__ {
+            tcan4x5x_int_pins: tcan4x5x_int_pins {
+                brcm,pins = <25>;
+                brcm,function = <0>; /* input */
+            };
+
+            tcan4x5x_rst_pins: tcan4x5x_rst_pins {
+                brcm,pins = <6>;
+                brcm,function = <1>; /* output */
+            };
+
+            tcan4x5x_wk_pins: tcan4x5x_wk_pins {
+                brcm,pins = <5>;
+                brcm,function = <1>; /* output */
+            };
+        };
+    };
+
+    /* the clock/oscillator of the can-controller */
+    fragment@2 {
+        target-path = "/clocks";
+        __overlay__ {
+            /* external 40M oscillator of tcan4x5x on SPI0.0 */
+            tcan4x5x_osc: tcan4x5x_osc {
+                compatible = "fixed-clock";
+                #clock-cells = <0>;
+                clock-frequency  = <40000000>;
+            };
+        };
+    };
+
+    /* the spi config of the can-controller itself binding everything together */
+    fragment@3 {
+        target = <&spi0>;
+        __overlay__ {
+            /* needed to avoid dtc warning */
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            tcan4x5x: tcan4x5x@0 {
+                compatible = "ti,tcan4x5x";
+                reg = <0>;
+                pinctrl-names = "default";
+                pinctrl-0 = <&tcan4x5x_int_pins>;
+                pinctrl-1 = <&tcan4x5x_rst_pins>;
+                pinctrl-2 = <&tcan4x5x_wk_pins>;
+                spi-max-frequency = <18000000>;
+                bosch,mram-cfg = <0x0 2 1 16 0 0 8 8>;
+                interrupt-parent = <&gpio>;
+                interrupts = <25 8>; /* IRQ_TYPE_LEVEL_LOW */
+                clocks = <&tcan4x5x_osc>;
+                clock-names = "cclk";
+                device-wake-gpios = <&gpio 5 0>;
+                reset-gpios = <&gpio 6 0>;
+            };
+        };
+    };
+};
