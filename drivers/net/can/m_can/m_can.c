@@ -327,6 +327,11 @@ struct m_can_fifo_element {
 	u8 data[CANFD_MAX_DLEN];
 };
 
+static inline int napi_is_scheduled(struct napi_struct *n)
+{
+	return test_bit(NAPI_STATE_SCHED, &n->state);
+}
+
 static inline u32 m_can_read(struct m_can_classdev *cdev, enum m_can_reg reg)
 {
 	return cdev->ops->read_reg(cdev, reg);
