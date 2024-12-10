@@ -32,7 +32,7 @@
 #include <linux/of_dma.h>
 #include <linux/dma-mapping.h>
 
-#include "rp1_ws281x_pwm.h"
+#include "pwm-ws281x-rp1.h"
 
 
 #define RP1_WS281X_PWM_DRIVER_VERSION            0x00000100
