@@ -4201,6 +4201,13 @@ Load:   dtoverlay=pwm-pio,<param>=<val>
 Params: gpio                    Output GPIO (0-27, default 4)
 
 
+Name:   pwm-ws281x
+Info:   Configures WS281X PWM on RP1. Pi 5 only.
+Load:   dtoverlay=pwm-ws281x,<param>=<val>
+Params: pin                     Output pin (default 12)
+        func                    Pin function (default alt0)
+
+
 Name:   pwm1
 Info:   Configures one or two PWM channel on PWM1 (BCM2711 only)
         N.B.:
