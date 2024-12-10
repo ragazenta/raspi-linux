@@ -725,6 +725,15 @@ config PWM_VT8500
 	  To compile this driver as a module, choose M here: the module
 	  will be called pwm-vt8500.
 
+config PWM_WS281X_RP1
+	tristate "RP1 WS281X LEDs PWM support"
+	depends on ARCH_BCM2835 || COMPILE_TEST
+	help
+	  PWM driver for controlling WS281X LEDs via Raspberry Pi RP1.
+
+	  To compile this driver as a module, choose M here: the module
+	  will be called pwm-ws281x-rp1.
+
 config PWM_XILINX
 	tristate "Xilinx AXI Timer PWM support"
 	depends on OF_ADDRESS
