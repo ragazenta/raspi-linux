@@ -10,7 +10,7 @@
             #size-cells = <2>;
 
             ws281x_pwm@98000 {
-                compatible = "rp1-ws281x-pwm";
+                compatible = "pwm-ws281x-rp1";
                 clocks = <&rp1_clocks 0x11>;
                 assigned-clocks = <&rp1_clocks 0x11>;
                 assigned-clock-rates = <2400000>;
@@ -20,7 +20,6 @@
                 dma-names = "pwm0";
                 status = "okay";
             };
-    
         };
     };
 };
