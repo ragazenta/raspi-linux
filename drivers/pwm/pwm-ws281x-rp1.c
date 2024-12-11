@@ -121,7 +121,7 @@ pwm_ws281x_rp1_device_t pwm_ws281x_rp1 = {
     .active = 0,
 };
 
-static int pwm_channel = 2;
+static int pwm_channel = 0;
 
 //
 // PWM Channel Setup
