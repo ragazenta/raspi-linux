@@ -125,6 +125,7 @@ struct m_can_classdev {
 	u32 tx_peripheral_submit;
 
 	struct mram_cfg mcfg[MRAM_CFG_NUM];
+	u32 sidf[2];
 
 	struct hrtimer hrtimer;
 };

@@ -223,6 +223,42 @@ enum m_can_reg {
 #define ILE_EINT1	BIT(1)
 #define ILE_EINT0	BIT(0)
 
+/* Standard ID message filters (SIDF) */
+#define SIDF_SFT_MASK		GENMASK(31, 30)
+#define SIDF_SFEC_MASK		GENMASK(29, 27)
+#define SIDF_SFID1_MASK		GENMASK(26, 16)
+#define SIDF_SFID2_MASK		GENMASK(10, 0)
+
+/* Standard Filter Type */
+#define SFT_RANGE	0x0
+#define SFT_DUAL	0x1
+#define SFT_CLASSIC	0x2
+#define SFT_DISABLED	0x3
+
+/* Standard Filter Element Configuration */
+#define SFEC_DISABLE	0x0
+#define SFEC_RXF0	0x1
+#define SFEC_RXF1	0x2
+#define SFEC_REJECT	0x3
+#define SFEC_PRIO	0x4
+#define SFEC_PRIO_RXF0	0x5
+#define SFEC_PRIO_RXF1	0x6
+#define SFEC_DEBUG	0x7
+
+/* Global Filter Configuration Field */
+#define GFC_ANFS	GENMASK(5, 4)
+#define GFC_ANFE	GENMASK(3, 2)
+#define GFC_RRFS	BIT(1)
+#define GFC_RRFE	BIT(0)
+
+#define ANFS_ACCEPT_RXF0	0x0
+#define ANFS_ACCEPT_RXF1	0x1
+#define ANFS_REJECT		0x2
+
+/* Standard ID Filter Configuration */
+#define SIDFC_LSS	GENMASK(23, 16)
+#define SIDFC_FLSSA	GENMASK(15, 0)
+
 /* Rx FIFO 0/1 Configuration (RXF0C/RXF1C) */
 #define RXFC_FWM_MASK	GENMASK(30, 24)
 #define RXFC_FS_MASK	GENMASK(22, 16)
@@ -377,6 +413,19 @@ m_can_txe_fifo_read(struct m_can_classdev *cdev, u32 fgi, u32 offset, u32 *val)
 		offset;
 
 	return cdev->ops->read_fifo(cdev, addr_offset, val, 1);
+}
+
+static int m_can_sid_filter_write(struct m_can_classdev *cdev,
+				  u32 can_id,
+				  u32 can_mask)
+{
+	u32 addr_offset = cdev->mcfg[MRAM_SIDF].off;
+	u32 sidf = FIELD_PREP(SIDF_SFT_MASK, SFT_CLASSIC) |
+		   FIELD_PREP(SIDF_SFEC_MASK, SFEC_RXF0) |
+		   FIELD_PREP(SIDF_SFID1_MASK, can_id) |
+		   FIELD_PREP(SIDF_SFID2_MASK, can_mask);
+
+	return cdev->ops->write_fifo(cdev, addr_offset, &sidf, sizeof(sidf));
 }
 
 static int m_can_cccr_update_bits(struct m_can_classdev *cdev, u32 mask, u32 val)
@@ -1472,8 +1521,22 @@ static int m_can_chip_config(struct net_device *dev)
 		    FIELD_PREP(RXESC_F1DS_MASK, RXESC_64B) |
 		    FIELD_PREP(RXESC_F0DS_MASK, RXESC_64B));
 
-	/* Accept Non-matching Frames Into FIFO 0 */
-	m_can_write(cdev, M_CAN_GFC, 0x0);
+	/* Configure standard id hw filter */
+	if (cdev->sidf[0] > 0 && cdev->sidf[1] > 0) {
+		err = m_can_sid_filter_write(cdev, cdev->sidf[0], cdev->sidf[1]);
+		if (err)
+			return err;
+
+		/* Configure offset to and number of standard id filters in MRAM */
+		m_can_write(cdev, M_CAN_SIDFC,
+			    FIELD_PREP(SIDFC_FLSSA, cdev->mcfg[MRAM_SIDF].off) |
+			    FIELD_PREP(SIDFC_LSS, 1));
+		/* Reject non-matching frames */
+		m_can_write(cdev, M_CAN_GFC, FIELD_PREP(GFC_ANFS, ANFS_REJECT));
+	} else {
+		/* Accept into FIFO 0 */
+		m_can_write(cdev, M_CAN_GFC, FIELD_PREP(GFC_ANFS, ANFS_ACCEPT_RXF0));
+	}
 
 	if (cdev->version == 30) {
 		/* only support one Tx Buffer currently */
@@ -2341,6 +2404,7 @@ struct m_can_classdev *m_can_class_allocate_dev(struct device *dev,
 {
 	struct m_can_classdev *class_dev = NULL;
 	u32 mram_config_vals[MRAM_CFG_LEN];
+	u32 sid_filter_vals[2];
 	struct net_device *net_dev;
 	u32 tx_fifo_size;
 	int ret;
@@ -2373,6 +2437,19 @@ struct m_can_classdev *m_can_class_allocate_dev(struct device *dev,
 
 	m_can_of_parse_mram(class_dev, mram_config_vals);
 	spin_lock_init(&class_dev->tx_handling_spinlock);
+
+	ret = fwnode_property_read_u32_array(dev_fwnode(dev),
+					     "sidf",
+					     sid_filter_vals,
+					     sizeof(sid_filter_vals) / 4);
+	if (ret == 0) {
+		class_dev->sidf[0] = sid_filter_vals[0];
+		class_dev->sidf[1] = sid_filter_vals[1];
+	} else {
+		class_dev->sidf[0] = 0x0;
+		class_dev->sidf[1] = 0x0;
+	}
+
 out:
 	return class_dev;
 }
