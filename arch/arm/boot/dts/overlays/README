@@ -5318,9 +5318,10 @@ Params: 4lane                   Use 4 lanes (only applicable to Compute Modules
 
 Name:   tcan4550-can0
 Info:   Configures the TCAN4550 CAN controller on spi0.0
-Load:   dtoverlay=tcan4550-can0
-Params: <None>
+Load:   dtoverlay=tcan4550-can0,<param>=<val>
+Params: filter_id               Set standard ID filter
 
+        filter_mask             Set standard ID filter mask
 
 Name:   tinylcd35
 Info:   3.5" Color TFT Display by www.tinylcd.com
