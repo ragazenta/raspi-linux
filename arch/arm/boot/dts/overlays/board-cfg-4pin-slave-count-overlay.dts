@@ -1,0 +1,19 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target-path = "/board-cfg";
+        __overlay__ {
+            slave_count: slave-count {
+                offset = <0>;
+            };
+        };
+    };
+
+    __overrides__ {
+        offset = <&slave_count>,"offset:0";
+    };
+};

@@ -865,6 +865,44 @@ Info:   This overlay is now deprecated - see i2c-sensor
 Load:   <Deprecated>
 
 
+Name:   board-cfg-4pin
+Info:   Configures board configuration base value via 4 GPIO pins
+Load:   dtoverlay=board-cfg-4pin,<param>=<val>
+Params: gpio0                   Select pin 0
+
+        gpio1                   Select pin 1
+
+        gpio2                   Select pin 2
+
+        gpio3                   Select pin 3
+
+        active_low              Use active low
+
+        offset                  Offset
+
+
+Name:   board-cfg-4pin-id
+Info:   Configures board id via 4 GPIO pins
+Load:   dtoverlay=board-cfg-4pin-id,<param>=<val>
+Params: offset                  Offset
+
+        ignore_hw               Ignore hardware value
+
+
+Name:   board-cfg-4pin-rpc-addr
+Info:   Configures board rpc address via 4 GPIO pins
+Load:   dtoverlay=board-cfg-4pin-rpc-addr,<param>=<val>
+Params: offset                  Offset
+
+        ignore_hw               Ignore hardware value
+
+
+Name:   board-cfg-4pin-slave-count
+Info:   Configures board slave count via 4 GPIO pins
+Load:   dtoverlay=board-cfg-4pin-slave-count,<param>=<val>
+Params: offset                  Offset
+
+
 Name:   camera-mux-2port
 Info:   Configures a 2 port camera multiplexer
         Note that currently ALL IMX290 modules share a common clock, therefore

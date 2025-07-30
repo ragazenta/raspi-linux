@@ -1,0 +1,20 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target-path = "/board-cfg";
+        __overlay__ {
+            board_id: board-id {
+                offset = <0>;
+            };
+        };
+    };
+
+    __overrides__ {
+        offset = <&board_id>,"offset:0";
+        ignore_hw = <&board_id>,"ignore-hw-value";
+    };
+};
