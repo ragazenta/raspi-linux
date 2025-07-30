@@ -1,0 +1,20 @@
+config GPIO_DIP
+	tristate "GPIO DIP switches for hardware configuration driver"
+	depends on GPIOLIB
+	help
+	  This enables a generic driver for reading a set of parallel GPIO
+	  lines from DIP switches and representing them as a single numerical
+	  value.
+
+	  The driver always interprets the GPIOs in LSB-first order. The
+	  first GPIO listed in the 'gpios' device tree property corresponds
+	  to bit 0, the second to bit 1, and so on. To achieve an MSB-first
+	  result, list the GPIOs in reverse order in the device tree.
+
+	  The driver performs a one-time read during boot and caches the
+	  value. It can then derive multiple values by adding device tree
+	  child nodes.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called gpio-dip.
+
