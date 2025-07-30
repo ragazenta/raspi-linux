@@ -1,0 +1,20 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target-path = "/board-cfg";
+        __overlay__ {
+            rpc_addr: rpc-addr {
+                offset = <0>;
+            };
+        };
+    };
+
+    __overrides__ {
+        offset = <&rpc_addr>,"offset:0";
+        ignore_hw = <&rpc_addr>,"ignore-hw-value";
+    };
+};
