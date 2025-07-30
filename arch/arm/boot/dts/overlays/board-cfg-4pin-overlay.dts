@@ -1,0 +1,53 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target-path = "/";
+        __overlay__ {
+            board_cfg: board-cfg {
+                compatible = "gpio-dip";
+                status = "okay";
+
+                /*
+                 * Default GPIO configuration (LSB-to-MSB)
+                 */
+                gpios = <&gpio 17 GPIO_ACTIVE_HIGH>,  // Default pin 0 (LSB)
+                        <&gpio 23 GPIO_ACTIVE_HIGH>,  // Default pin 1
+                        <&gpio 22 GPIO_ACTIVE_HIGH>,  // Default pin 2
+                        <&gpio 27 GPIO_ACTIVE_HIGH>;  // Default pin 3 (MSB)
+
+                offset = <0>;
+            };
+        };
+    };
+
+    __overrides__ {
+        /*
+         * Parameters to set each of the 4 GPIO pins individually.
+         * The driver will interpret these as LSB-to-MSB.
+         */
+        gpio0 = <&board_cfg>,"gpios:4";  // Target pin 0's number
+        gpio1 = <&board_cfg>,"gpios:16"; // Target pin 1's number
+        gpio2 = <&board_cfg>,"gpios:28"; // Target pin 2's number
+        gpio3 = <&board_cfg>,"gpios:40"; // Target pin 3's number
+
+        /*
+         * Parameter to set ACTIVE LOW for all pins.
+         * Default is ACTIVE HIGH. Set active_low=1 to change.
+         */
+        active_low = <&board_cfg>,"gpios:8",  // Flag for pin 0
+                     <&board_cfg>,"gpios:20", // Flag for pin 1
+                     <&board_cfg>,"gpios:32", // Flag for pin 2
+                     <&board_cfg>,"gpios:44"; // Flag for pin 3
+
+        /*
+         * Parameter to set offset.
+         */
+        offset = <&board_cfg>,"offset:0";
+    };
+};
