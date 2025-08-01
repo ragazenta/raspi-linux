@@ -389,6 +389,8 @@ static int tcan4x5x_check_gpios(struct m_can_classdev *cdev,
 	return 0;
 }
 
+extern int gpio_dip_get(const char *name, u32 *result);
+
 static const struct m_can_ops tcan4x5x_ops = {
 	.init = tcan4x5x_init,
 	.read_reg = tcan4x5x_read_reg,
@@ -403,12 +405,33 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
 	const struct tcan4x5x_version_info *version_info;
 	struct tcan4x5x_priv *priv;
 	struct m_can_classdev *mcan_class;
+	const char *sid_filter_provider;
+	u32 sid_filter_id;
+	u32 sid_filter_id_offset;
 	int freq, ret;
 
 	mcan_class = m_can_class_allocate_dev(&spi->dev,
 					      sizeof(struct tcan4x5x_priv));
 	if (!mcan_class)
 		return -ENOMEM;
+
+	if (mcan_class->sidf[1] != 0) {
+		ret = device_property_read_string(&spi->dev, "sidf-provider", &sid_filter_provider);
+		if (ret == 0) {
+			ret = gpio_dip_get(sid_filter_provider, &sid_filter_id);
+			if (ret) {
+				if (ret == -EPROBE_DEFER)
+					goto out_m_can_class_free_dev;
+			} else {
+				mcan_class->sidf[0] = sid_filter_id;
+				ret = device_property_read_u32(&spi->dev, "sidf-id-offset", &sid_filter_id_offset);
+				if (ret == 0)
+					mcan_class->sidf[0] = sid_filter_id + sid_filter_id_offset;
+			}
+		}
+		dev_info(&spi->dev, "sidf configured (id=%d, mask=%d)\n",
+			 mcan_class->sidf[0], mcan_class->sidf[1]);
+	}
 
 	ret = m_can_check_mram_cfg(mcan_class, TCAN4X5X_MRAM_SIZE);
 	if (ret)
