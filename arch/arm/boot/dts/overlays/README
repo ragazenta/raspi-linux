@@ -4894,6 +4894,11 @@ Params: filter_id               Set standard ID filter
 
         filter_mask             Set standard ID filter mask
 
+        filter_provider         Set filter ID provider (use gpio-dip driver)
+
+        filter_id_offset        Set ID offset
+
+
 Name:   tinylcd35
 Info:   3.5" Color TFT Display by www.tinylcd.com
         Options: Touch, RTC, keypad
