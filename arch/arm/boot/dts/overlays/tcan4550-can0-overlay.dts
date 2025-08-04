@@ -81,5 +81,7 @@
     __overrides__ {
         filter_id = <&tcan4x5x>, "sidf:0";
         filter_mask = <&tcan4x5x>, "sidf:4";
+        filter_provider = <&tcan4x5x>, "sidf-provider";
+        filter_id_offset = <&tcan4x5x>, "sidf-id-offset:0";
     };
 };
