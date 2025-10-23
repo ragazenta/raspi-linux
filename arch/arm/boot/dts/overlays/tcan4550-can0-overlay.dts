@@ -79,6 +79,12 @@
     };
 
     __overrides__ {
+        interrupt = <&tcan4x5x_int_pins>, "brcm,pins:0",
+                    <&tcan4x5x>, "interrupts:0";
+        reset = <&tcan4x5x_rst_pins>, "brcm,pins:0",
+                <&tcan4x5x>, "reset-gpios:4";
+        wake = <&tcan4x5x_wk_pins>, "brcm,pins:0",
+               <&tcan4x5x>, "device-wake-gpios:4";
         filter_id = <&tcan4x5x>, "sidf:0";
         filter_mask = <&tcan4x5x>, "sidf:4";
         filter_provider = <&tcan4x5x>, "sidf-provider";
