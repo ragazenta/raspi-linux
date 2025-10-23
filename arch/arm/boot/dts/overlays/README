@@ -5357,7 +5357,13 @@ Params: 4lane                   Use 4 lanes (only applicable to Compute Modules
 Name:   tcan4550-can0
 Info:   Configures the TCAN4550 CAN controller on spi0.0
 Load:   dtoverlay=tcan4550-can0,<param>=<val>
-Params: filter_id               Set standard ID filter
+Params: interrupt               GPIO for interrupt signal (default 25)
+
+        reset                   GPIO for reset signal (default 6)
+
+        wake                    GPIO for wake signal (default 5)
+
+        filter_id               Set standard ID filter
 
         filter_mask             Set standard ID filter mask
 
