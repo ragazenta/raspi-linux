@@ -1,0 +1,93 @@
+/*
+ * Device tree overlay for tcan4550 on spi0.1
+ */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+    /* disable spi-dev for spi0.1 */
+    fragment@0 {
+        target = <&spidev1>;
+        __overlay__ {
+            status = "disabled";
+        };
+    };
+
+    /* the interrupt pin of the can-controller */
+    fragment@1 {
+        target = <&gpio>;
+        __overlay__ {
+            tcan4x5x_int_pins: tcan4x5x_1_int_pins {
+                brcm,pins = <24>;
+                brcm,function = <0>; /* input */
+            };
+
+            tcan4x5x_rst_pins: tcan4x5x_1_rst_pins {
+                brcm,pins = <23>;
+                brcm,function = <1>; /* output */
+            };
+
+            tcan4x5x_wk_pins: tcan4x5x_1_wk_pins {
+                brcm,pins = <22>;
+                brcm,function = <1>; /* output */
+            };
+        };
+    };
+
+    /* the clock/oscillator of the can-controller */
+    fragment@2 {
+        target-path = "/clocks";
+        __overlay__ {
+            /* external 40M oscillator of tcan4x5x on SPI0.1 */
+            tcan4x5x_osc: tcan4x5x_1_osc {
+                compatible = "fixed-clock";
+                #clock-cells = <0>;
+                clock-frequency  = <40000000>;
+            };
+        };
+    };
+
+    /* the spi config of the can-controller itself binding everything together */
+    fragment@3 {
+        target = <&spi0>;
+        __overlay__ {
+            /* needed to avoid dtc warning */
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            tcan4x5x: tcan4x5x@1 {
+                compatible = "ti,tcan4x5x";
+                reg = <1>;
+                pinctrl-names = "default";
+                pinctrl-0 = <&tcan4x5x_int_pins>;
+                pinctrl-1 = <&tcan4x5x_rst_pins>;
+                pinctrl-2 = <&tcan4x5x_wk_pins>;
+                spi-max-frequency = <18000000>;
+                bosch,mram-cfg = <0x0 2 1 16 0 0 8 8>;
+                sidf = <0 0>;
+                interrupt-parent = <&gpio>;
+                interrupts = <24 8>; /* IRQ_TYPE_LEVEL_LOW */
+                clocks = <&tcan4x5x_osc>;
+                clock-names = "cclk";
+                device-wake-gpios = <&gpio 22 0>;
+                reset-gpios = <&gpio 23 0>;
+            };
+        };
+    };
+
+    __overrides__ {
+        interrupt = <&tcan4x5x_int_pins>, "brcm,pins:0",
+                    <&tcan4x5x>, "interrupts:0";
+        reset = <&tcan4x5x_rst_pins>, "brcm,pins:0",
+                <&tcan4x5x>, "reset-gpios:4";
+        wake = <&tcan4x5x_wk_pins>, "brcm,pins:0",
+               <&tcan4x5x>, "device-wake-gpios:4";
+        filter_id = <&tcan4x5x>, "sidf:0";
+        filter_mask = <&tcan4x5x>, "sidf:4";
+        filter_provider = <&tcan4x5x>, "sidf-provider";
+        filter_id_offset = <&tcan4x5x>, "sidf-id-offset:0";
+    };
+};
