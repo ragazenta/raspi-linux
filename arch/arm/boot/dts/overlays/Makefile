@@ -312,6 +312,7 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
 	tc358743-audio.dtbo \
 	tc358743-pi5.dtbo \
 	tcan4550-can0.dtbo \
+	tcan4550-can1.dtbo \
 	tinylcd35.dtbo \
 	tpm-slb9670.dtbo \
 	tpm-slb9673.dtbo \
