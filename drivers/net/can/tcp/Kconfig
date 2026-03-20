@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+menu "CAN TCP interfaces"
+	depends on NET
+
+config CAN_TCP_SLCAN
+	tristate "Serial line CAN over TCP"
+	depends on STREAM_PARSER
+	help
+	  This driver creates a standard SocketCAN network interface (canX)
+	  that communicates using the ASCII SLCAN protocol. Unlike the
+	  standard slcan driver that attaches to a TTY/Serial port, this
+	  driver utilizes a TCP socket passed from userspace via ioctl.
+
+	  It uses the kernel's strparser (Stream Parser) for efficient
+	  message framing in kernel space.
+
+	  To compile this driver as a module, choose M here: the module
+	  will be called tcp_slcan.
+
+endmenu

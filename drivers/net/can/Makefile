@@ -12,6 +12,7 @@ obj-y				+= esd/
 obj-y				+= rcar/
 obj-y				+= rockchip/
 obj-y				+= spi/
+obj-y				+= tcp/
 obj-y				+= usb/
 obj-y				+= softing/
 
