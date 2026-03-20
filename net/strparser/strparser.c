@@ -11,8 +11,7 @@
 #include <linux/file.h>
 #include <linux/in.h>
 #include <linux/kernel.h>
-#include <linux/export.h>
-#include <linux/init.h>
+#include <linux/module.h>
 #include <linux/net.h>
 #include <linux/netdevice.h>
 #include <linux/poll.h>
@@ -546,7 +545,7 @@ void strp_check_rcv(struct strparser *strp)
 }
 EXPORT_SYMBOL_GPL(strp_check_rcv);
 
-static int __init strp_dev_init(void)
+static int __init strp_mod_init(void)
 {
 	BUILD_BUG_ON(sizeof(struct sk_skb_cb) >
 		     sizeof_field(struct sk_buff, cb));
@@ -557,4 +556,11 @@ static int __init strp_dev_init(void)
 
 	return 0;
 }
-device_initcall(strp_dev_init);
+
+static void __exit strp_mod_exit(void)
+{
+	destroy_workqueue(strp_wq);
+}
+module_init(strp_mod_init);
+module_exit(strp_mod_exit);
+MODULE_LICENSE("GPL");
