@@ -225,6 +225,7 @@ source "drivers/net/can/rcar/Kconfig"
 source "drivers/net/can/sja1000/Kconfig"
 source "drivers/net/can/softing/Kconfig"
 source "drivers/net/can/spi/Kconfig"
+source "drivers/net/can/tcp/Kconfig"
 source "drivers/net/can/usb/Kconfig"
 
 endif #CAN_NETLINK

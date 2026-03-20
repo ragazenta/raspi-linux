@@ -10,6 +10,7 @@ obj-$(CONFIG_CAN_SLCAN)		+= slcan/
 obj-y				+= dev/
 obj-y				+= rcar/
 obj-y				+= spi/
+obj-y				+= tcp/
 obj-y				+= usb/
 obj-y				+= softing/
 
