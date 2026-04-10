@@ -530,16 +530,18 @@ static void tcp_slcan_rcv_msg(struct strparser *strp, struct sk_buff *skb)
 	struct strp_msg *rxm = strp_msg(skb);
 	int offset = rxm->offset;
 	int len = rxm->full_len;
-	if (unlikely(len < 6 || len > SLCAN_FD_MTU - 1 || skb_linearize(skb))) {
+	if (unlikely(len < 6 || len > SLCAN_FD_MTU - 1)) {
 		sl->dev->stats.rx_errors++;
-		kfree_skb(skb);
-		return;
+		goto out;
 	}
-
 	// strip the '\r' delimiter
 	sl->rcount = len - 1;
-	memcpy(sl->rbuff, skb->data + offset, sl->rcount);
+	if (skb_copy_bits(skb, offset, sl->rbuff, sl->rcount)) {
+		sl->dev->stats.rx_errors++;
+		goto out;
+	}
 	slcan_bump(sl);
+out:
 	kfree_skb(skb);
 }
 
