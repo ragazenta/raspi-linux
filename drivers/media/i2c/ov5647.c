@@ -129,6 +129,7 @@ struct ov5647 {
 	struct v4l2_ctrl		*hflip;
 	struct v4l2_ctrl		*vflip;
 	bool				streaming;
+	u32				frex_mode;
 };
 
 static inline struct ov5647 *to_sensor(struct v4l2_subdev *sd)
@@ -160,6 +161,15 @@ static const struct regval_list sensor_oe_enable_regs[] = {
 	{0x3000, 0x0f},
 	{0x3001, 0xff},
 	{0x3002, 0xe4},
+};
+
+static const struct regval_list ov5647_frex_regs[] = {
+	{0x3002, 0xe8},	/* SC_CMMN_PAD_OEN2 */
+	{0x3b06, 0x0f},	/* FREX_CTRL */
+	{0x3b07, 0x08},	/* STROBE_FREX_MODE_SEL */
+	{0x3011, 0x00},	/* SC_CMMN_PAD_PK */
+	{0x3817, 0x08},	/* TIMING_HSYNCST */
+	{0x4704, 0x02},	/* DVP_VSYNC_MODE */
 };
 
 static struct regval_list ov5647_2592x1944_10bpp[] = {
@@ -725,6 +735,15 @@ static int ov5647_set_mode(struct v4l2_subdev *sd)
 	if (ret < 0) {
 		dev_err(&client->dev, "write sensor default regs error\n");
 		return ret;
+	}
+
+	if (sensor->frex_mode) {
+		ret = ov5647_write_array(sd, ov5647_frex_regs,
+					 ARRAY_SIZE(ov5647_frex_regs));
+		if (ret < 0) {
+			dev_err(&client->dev, "write sensor FREX regs error\n");
+			return ret;
+		}
 	}
 
 	ret = ov5647_set_virtual_channel(sd, 0);
@@ -1484,6 +1503,8 @@ static int ov5647_parse_dt(struct ov5647 *sensor, struct device_node *np)
 	};
 	struct device_node *ep;
 	int ret;
+
+	of_property_read_u32(np, "fmlx,frex_mode", &sensor->frex_mode);
 
 	ep = of_graph_get_next_endpoint(np, NULL);
 	if (!ep)
