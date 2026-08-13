@@ -11,6 +11,7 @@ cam_node: ov5647@36 {
 
 	rotation = <0>;
 	orientation = <2>;
+	fmlx,frex_mode = <0>;
 
 	port {
 		cam_endpoint: endpoint {
