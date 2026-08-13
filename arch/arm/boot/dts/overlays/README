@@ -3776,6 +3776,7 @@ Params: rotation                Mounting rotation of the camera sensor (0 or
         cam0                    Adopt the default configuration for CAM0 on a
                                 Compute Module (CSI0, i2c_vc, and cam0_reg).
         vcm                     Configure a VCM focus drive on the sensor.
+        frex                    Configure FREX modes (0 = disabled, 1 = FREX pad, default 0)
 
 
 Name:   ov64a40
