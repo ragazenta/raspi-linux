@@ -82,6 +82,7 @@
 		       <&vcm_node>, "VANA-supply:0=",<&cam0_reg>;
 		vcm = <&vcm_node>, "status=okay",
 		       <&cam_node>,"lens-focus:0=", <&vcm_node>;
+		frex = <&cam_node>,"fmlx,frex_mode:0";
 	};
 };
 
