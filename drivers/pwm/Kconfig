@@ -751,6 +751,16 @@ config PWM_VT8500
 	  To compile this driver as a module, choose M here: the module
 	  will be called pwm-vt8500.
 
+config PWM_WS281X_LEGACY
+	tristate "BCM2711 WS281X LEDs PWM support"
+	depends on ARCH_BCM2835 || COMPILE_TEST
+	help
+	  PWM driver for controlling WS281X LEDs via the pre-RP1 Raspberry Pi
+	  PWM block (BCM2711), as used on the Pi 4 families.
+
+	  To compile this driver as a module, choose M here: the module
+	  will be called pwm-ws281x-legacy.
+
 config PWM_WS281X_RP1
 	tristate "RP1 WS281X LEDs PWM support"
 	depends on ARCH_BCM2835 || COMPILE_TEST
