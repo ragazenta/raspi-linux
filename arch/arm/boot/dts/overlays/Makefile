@@ -240,6 +240,7 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
 	pwm-gpio-fan.dtbo \
 	pwm-ir-tx.dtbo \
 	pwm-pio.dtbo \
+	pwm-ws281x-legacy.dtbo \
 	pwm-ws281x.dtbo \
 	pwm1.dtbo \
 	qca7000.dtbo \

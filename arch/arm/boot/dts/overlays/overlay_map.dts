@@ -257,6 +257,10 @@
 		bcm2712;
 	};
 
+	pwm-ws281x-legacy {
+		bcm2711;
+	};
+
 	pwm1 {
 		bcm2711;
 	};
